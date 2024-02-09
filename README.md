@@ -9,3 +9,11 @@ To run locally,
 ```
 conda create --name myenv python=3.10
 ```
+
+2. Install all dependencies
+
+```
+pip install -r requirements.txt
+```
+
+3. put in your API key in `.env` file. Get your api key from [here](https://makersuite.google.com/app/apikey)
