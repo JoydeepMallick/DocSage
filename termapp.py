@@ -1,12 +1,11 @@
 
-import streamlit as st
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
 
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS # previosuly was langchain.vectorstores
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
@@ -48,15 +47,16 @@ def get_conversational_chain():
 
     Answer :
     """
-    model = ChatGoogleGenerativeAI(model = 'gemini-pro', temperature=0.9)
+    model = ChatGoogleGenerativeAI(model = 'gemini-1.5-pro', temperature=0.9)
     prompt = PromptTemplate(template = prompt_template, input_variables=["context", "question"])
-    chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+    chain = load_qa_chain(llm=model, chain_type="stuff", prompt=prompt)    
     return chain
+
 
 
 def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
-    new_db = FAISS.load_local("faiss_index", embeddings)
+    new_db = FAISS.load_local(folder_path="./faiss_index/", embeddings=embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
@@ -66,8 +66,9 @@ def user_input(user_question):
         return_only_outputs = True
     )
 
-    print(response)
-    # st.write("Reply: ", response["output_text"])
+    print("\n\n"+"🧙"*50)
+    print(response["output_text"])
+    print("🧙"*50)
 
 
 def main():

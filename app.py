@@ -2,16 +2,14 @@ import streamlit as st
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
-
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
-from langchain_community.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS # just check documentation man so many changes😭 why not stick to one
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
-from langchain.prompts import PromptTemplate
+from langchain.prompts import ChatPromptTemplate, PromptTemplate
 from dotenv import load_dotenv
 
-import argparse
 
 # load the dotenv file
 load_dotenv()
@@ -41,21 +39,30 @@ def get_vector_store(text_chunks):
 
 def get_conversational_chain():
     prompt_template = """
+    You are DocSage, the AI document helper for everyone who is wise enough to choose you. You are here to help people find answers to their questions from the documents they provide.
     Answer the question as detailed as possible from provided context, make sure to provide all the details.
     Context: \n {context}\n
     Question: \n {question}\n
 
     Answer :
     """
-    model = ChatGoogleGenerativeAI(model = 'gemini-pro', temperature=0.9)
     prompt = PromptTemplate(template = prompt_template, input_variables=["context", "question"])
+    # prompt = ChatPromptTemplate([
+    #     ("system", "You are DocSage, the AI document helper for everyone who is wise enough to choose you. You are here to help people find answers to their questions from the documents they provide."),
+    #     ("human", "Context:\n{context}\n\nQuestion:\n{question}\n\nAnswer:")
+    # ])
+
+
+    # the model name changes with release refer google api docs
+    model = ChatGoogleGenerativeAI(model = 'gemini-1.5-pro', temperature=0.9)
+    
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
 
 
 def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
-    new_db = FAISS.load_local("faiss_index", embeddings)
+    new_db = FAISS.load_local(folder_path="./faiss_index/", embeddings=embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
     chain = get_conversational_chain()
@@ -66,33 +73,29 @@ def user_input(user_question):
     )
 
     print(response)
-    # st.write("Reply: ", response["output_text"])
+    st.write("Reply: ", response["output_text"])
 
 
+#########################################################################################
 def main():
-    parser = argparse.ArgumentParser(description="DocSage - Chatbot Training on PDF Data")
-    parser.add_argument("pdf_files", nargs="+", help="PDF file(s) to process")
-    parser.add_argument("-q", "--question", help="Question to ask the chatbot")
-    args = parser.parse_args()
+    st.set_page_config(page_title="DocSage", page_icon=":robot:")
+    st.header("🧙‍ DocSage - AI Document Helper")
 
-    pdf_files = args.pdf_files
-    user_question = args.question
-
-    if not pdf_files:
-        print("No PDF files provided. Please provide at least one PDF file.")
-        return
-
-    text = get_text_from_pdf(pdf_files)
-
-    text_chunks = get_chunks(text)
-    get_vector_store(text_chunks)
+    user_question = st.text_input("Hey answer seeker, ask me anything about the document you provided")
 
     if user_question:
-        user_input(user_question)
-    else:
-        print("No question provided!!! Try again")
-        return
+        user_input(user_question) # pass the questions
 
+    with st.sidebar:
+        st.title("Menu")
+        pdf_docs = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
+
+        if st.button("Submit & Process"):
+            with st.spinner("Processing..."):
+                raw_text = get_text_from_pdf(pdf_docs)
+                text_chunks = get_chunks(raw_text)
+                get_vector_store(text_chunks)
+                st.success("Processing Completed🔮")
 
 if __name__ == "__main__":
     main()
