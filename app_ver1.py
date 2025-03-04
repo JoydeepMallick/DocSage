@@ -77,84 +77,7 @@ def user_input(user_question):
 #########################################################################################
 #                                    UI
 #########################################################################################
-
-
 def main():
-    # Set page configuration
-    st.set_page_config(page_title="DocSage", page_icon=":crystal_ball:", layout="wide")
-    
-    # Custom CSS for better styling
-    st.markdown(
-        """
-        <style>
-        body {
-            background-color: #1e1e2e;
-            color: #ffffff;
-        }
-        .main-container {
-            text-align: center;
-        }
-        .stTextInput>div>div>input {
-            border-radius: 15px;
-            border: 2px solid #6c5ce7;
-            padding: 10px;
-            background-color: #2d2d3a;
-            color: white;
-        }
-        .stButton>button {
-            background-color: #6c5ce7;
-            color: white;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-        .stButton>button:hover {
-            background-color: #a29bfe;
-            color: black;
-        }
-        .sidebar .stButton>button {
-            background-color: #fd79a8;
-        }
-        .sidebar .stButton>button:hover {
-            background-color: #ff7675;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-    
-    # Header
-    st.markdown("""<h1 style='text-align: center; color: #6c5ce7;'>🧙‍♂️ DocSage - AI Document Helper</h1>""", unsafe_allow_html=True)
-    st.markdown("---")
-    
-    # Layout: Two columns (Main content | Sidebar)
-    col1, col2 = st.columns([3, 1])
-    
-    with col1:
-        st.subheader("🔍 Ask your question")
-        user_question = st.text_input("Hey answer seeker, ask me anything about the document you provided")
-        
-        if user_question:
-            user_input(user_question)  # Process input
-        
-    with col2:
-        st.sidebar.title("📂 Upload & Process")
-        pdf_docs = st.sidebar.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
-        add_vertical_space(2)
-        
-        if st.sidebar.button("✨ Submit & Process"):
-            with st.spinner("🔮 Processing..."):
-                raw_text = get_text_from_pdf(pdf_docs)
-                text_chunks = get_chunks(raw_text)
-                get_vector_store(text_chunks)
-                st.success("🎉 Processing Completed! Ready to answer your questions.")
-    
-if __name__ == "__main__":
-    main()
-
-
-###### old UI #######
-'''def main():
     st.set_page_config(page_title="DocSage", page_icon="🧙")
     st.header("🧙‍ DocSage - AI Document Helper")
 
@@ -173,4 +96,7 @@ if __name__ == "__main__":
                 text_chunks = get_chunks(raw_text)
                 get_vector_store(text_chunks)
                 st.success("Processing Completed🔮")
-'''
+
+    
+if __name__ == "__main__":
+    main()
