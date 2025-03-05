@@ -71,7 +71,8 @@ def user_input(user_question):
     )
 
     print(response)
-    st.write("Reply: ", response["output_text"])
+    return response
+    #st.write("Reply: ", response["output_text"])
 
 
 #########################################################################################
@@ -83,23 +84,32 @@ def main():
     # Set page configuration
     st.set_page_config(page_title="DocSage", page_icon=":crystal_ball:", layout="wide")
     
-    # Custom CSS for better styling
+    # Custom CSS for styling: adds background image, glow effects, and centering
     st.markdown(
         """
         <style>
         body {
-            background-color: #1e1e2e;
+            center fixed;
             color: #ffffff;
         }
         .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
+        }
+        .stTextInput {
+            position: fixed;
+            bottom: 3rem;
         }
         .stTextInput>div>div>input {
             border-radius: 15px;
             border: 2px solid #6c5ce7;
             padding: 10px;
-            background-color: #2d2d3a;
+            background-color: rgba(45, 45, 58, 0.9);
             color: white;
+            box-shadow: 0px 0px 15px rgba(108, 92, 231, 0.7);
         }
         .stButton>button {
             background-color: #6c5ce7;
@@ -107,6 +117,7 @@ def main():
             border-radius: 12px;
             font-size: 16px;
             transition: 0.3s;
+            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5);
         }
         .stButton>button:hover {
             background-color: #a29bfe;
@@ -118,25 +129,82 @@ def main():
         .sidebar .stButton>button:hover {
             background-color: #ff7675;
         }
+        .gif-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .user-message {
+            text-align: right;
+            background-color: #4a69bd;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 60%;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+        .ai-message {
+            text-align: left;
+            background-color: #dcdde1;
+            color: black;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 60%;
+            margin-right: auto;
+            margin-left: 10px;
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
     )
     
-    # Header
-    st.markdown("""<h1 style='text-align: center; color: #6c5ce7;'>🧙‍♂️ DocSage - AI Document Helper</h1>""", unsafe_allow_html=True)
+    # GIF Animation
+    st.markdown(
+        """
+        <div class='gif-container'>
+            <img src='https://gifdb.com/images/high/pepe-wizard-reading-book-8ek6h8e9aexhecu6.gif' width='100'>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    
+    # Header with better alignment
+    st.markdown("""
+        <h1 style='text-align: center; color: #6c5ce7;'>🔮 DocSage - AI Document Helper</h1>
+    """, unsafe_allow_html=True)
     st.markdown("---")
+    
+    # Centering the content properly
+    st.markdown("<div class='main-container'>", unsafe_allow_html=True)
     
     # Layout: Two columns (Main content | Sidebar)
     col1, col2 = st.columns([3, 1])
     
     with col1:
         st.subheader("🔍 Ask your question")
+        
+        # Initialize chat history if not present
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+        
+        # textbox for user to enter data
         user_question = st.text_input("Hey answer seeker, ask me anything about the document you provided")
-        
+    
+
         if user_question:
-            user_input(user_question)  # Process input
+            response = user_input(user_question)  # Process input
+
+            st.session_state.chat_history.append({"user": user_question, "response": response["output_text"]})
         
+        # Display chat history
+        for chat in st.session_state.chat_history:
+            st.markdown(f"<div class='user-message'><strong>🧌 You:</strong><br>{chat['user']}</div>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)  # Spacing between messages
+            st.markdown(f"<div class='ai-message'><strong>🧙‍♂️ DocSage:</strong><br>{chat['response']}</div>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)  # Spacing between messages
+    
     with col2:
         st.sidebar.title("📂 Upload & Process")
         pdf_docs = st.sidebar.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
@@ -149,28 +217,21 @@ def main():
                 get_vector_store(text_chunks)
                 st.success("🎉 Processing Completed! Ready to answer your questions.")
     
+    st.markdown("</div>", unsafe_allow_html=True)  # Close main-container div
+
+    # bottom right corner link to github repo
+    st.markdown(
+    """
+    <div style="text-align: right;">
+        <a href="https://github.com/JoydeepMallick/DocSage" target="_blank">
+            <img src="https://img.shields.io/badge/GitHub-Repo-%23181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repo">
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+    )
+
+
+
 if __name__ == "__main__":
     main()
-
-
-###### old UI #######
-'''def main():
-    st.set_page_config(page_title="DocSage", page_icon="🧙")
-    st.header("🧙‍ DocSage - AI Document Helper")
-
-    user_question = st.text_input("Hey answer seeker, ask me anything about the document you provided")
-
-    if user_question:
-        user_input(user_question) # pass the questions
-
-    with st.sidebar:
-        st.title("Menu")
-        pdf_docs = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
-
-        if st.button("Submit & Process"):
-            with st.spinner("Processing..."):
-                raw_text = get_text_from_pdf(pdf_docs)
-                text_chunks = get_chunks(raw_text)
-                get_vector_store(text_chunks)
-                st.success("Processing Completed🔮")
-'''

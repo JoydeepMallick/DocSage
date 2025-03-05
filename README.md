@@ -2,6 +2,10 @@
 
 DocSage is personalized chatbot to read data from inserted files and then provide answers to your queries.
 
+The basic workflow diagram 
+
+![](./workingdiagram.png)
+
 I have test on Python 3.10 only.
 
 To run locally,
@@ -20,6 +24,15 @@ pip install -r requirements.txt
 
 3. put in your API key in `.env` file. Get your api key from [here](https://makersuite.google.com/app/apikey)
 
+---
+### NOTE
+
+If something does not work, 2 possible things are most common :
+
+1. Your api requests are exhausted or you have not put in your api key in `.env` file
+
+2. Some syntax changes were introduced in community🥲 may god help you!
+---
 
 ### Version 1
 A terminal version of app has been made.
@@ -53,5 +66,5 @@ streamlit run app.py --server.headless true
 or below 
 
 ```bash
-streamlit run app.py --server.address=0.0.0.0 --server.port=8501 --server.headless true\
+streamlit run app.py --server.address=0.0.0.0 --server.port=8501 --server.headless true
 ``` 
