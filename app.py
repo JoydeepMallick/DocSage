@@ -70,7 +70,7 @@ def user_input(user_question):
         return_only_outputs = True
     )
 
-    print(response)
+    print(response) #printing on the backend or terminal for debugging
     return response
     #st.write("Reply: ", response["output_text"])
 
