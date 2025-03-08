@@ -2,6 +2,7 @@
 
 DocSage is personalized chatbot to read data from inserted files and then provide answers to your queries.
 
+[Reference](https://www.youtube.com/watch?v=dXxQ0LR-3Hg)
 ---
 
 ## The basic workflow diagram 
@@ -35,6 +36,10 @@ A very simple example (Again from IBM) : “dad” and “mom” would be repres
 ```
 
 Although there is some similarity between these two words, **we would expect that “father” would live in much closer proximity to “dad” in the vector space, resulting in a higher dot product** (a measure of the relative direction of two vectors and how closely they align in the direction they point).
+
+Also read this regarding [PineCone suggestion](https://www.pinecone.io/learn/series/rag/embedding-models-rundown/) of selecting embedding model.
+
+![](https://www.pinecone.io/_next/image/?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fvr8gru94%2Fproduction%2F281c3789fcee1134ed470e3cb938831c02d531b2-2058x879.png&w=3840&q=75)
 
 #### Step 4
 
