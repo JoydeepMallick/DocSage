@@ -111,6 +111,7 @@ python termapp.py ./location/to/pdf -q "Ask question related to pdf provided"
 
 - version 2.1 : `app_ver1.py` simple UI and all working
 - version 2.2 : `app_ver2.py` added more features and better UI
+- version 2.3 : `app_ver3.py` added more features and better UI part 2
 - `app.py` bleeding edge with bugs
 
 A GUI version of app has been made using streamlit

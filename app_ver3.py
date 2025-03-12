@@ -95,24 +95,27 @@ def main():
             get_vector_store(text_chunks)
             st.success("🎉 Processing Completed! Ready to answer your questions.")
 
-    # Custom CSS for styling and fixed input
+    # Custom CSS
     st.markdown(
         """
         <style>
+        /* Body color, removing the default margin */
         body {
             margin: 0;
             padding: 0;
-            background-color: #1e1e2e;
+            background-color: #1e1e2e; /* Adjust as desired */
             color: #ffffff;
         }
-        /* Chat container that scrolls */
+
+        /* Container for chat messages (fixed height, scrollable) */
         .chat-container {
-            height: 70vh;
+            height: 70vh; /* Adjust to taste */
             overflow-y: auto;
-            margin-bottom: 120px; /* Leave space for the fixed input area */
+            margin-bottom: 120px; /* Space for the fixed input box */
             padding: 1rem;
         }
-        /* Fixed input area */
+
+        /* Fixed text input at the bottom */
         .fixed-input {
             position: fixed;
             bottom: 0;
@@ -122,6 +125,8 @@ def main():
             padding: 1rem;
             z-index: 9999;
         }
+
+        /* Style for the text input box itself */
         .fixed-input input {
             width: 100%;
             border-radius: 15px;
@@ -131,6 +136,8 @@ def main():
             color: white;
             box-shadow: 0px 0px 15px rgba(108, 92, 231, 0.7);
         }
+
+        /* Chat bubble styling */
         .user-message {
             text-align: right;
             background-color: #4a69bd;
@@ -153,10 +160,11 @@ def main():
             margin-left: 10px;
             margin-top: 10px;
         }
-        /* GitHub link floating button */
+
+        /* GitHub repo link at bottom-right (optional) */
         .github-link {
             position: fixed;
-            bottom: 60px;
+            bottom: 60px; /* Above the input box */
             right: 20px;
         }
         </style>
@@ -164,7 +172,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    # Header
+    # Page header
     st.markdown(
         """
         <h1 style='text-align: center; color: #6c5ce7; margin-top: 1rem;'>
@@ -175,35 +183,36 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Initialize chat history if not present
+    # Initialize chat history
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
-
-
-    # Fixed input area at the bottom using a form
-    with st.form("chat_form", clear_on_submit=True):
-        user_question = st.text_input("Ask me anything about your document:")
-        submitted = st.form_submit_button("Send")
-        if submitted and user_question:
-            # Process input (replace with your actual logic)
-            response = user_input(user_question)  # Example: get AI response from your function
-            # Append the message to chat history
-            st.session_state.chat_history.append({
-                "user": user_question,
-                "response": response["output_text"] if response else "No response available."
-            })
-
-            # No need to manually clear the input; clear_on_submit=True handles that.
-
-        # Chat container (scrollable area for messages)
+    # Chat container (scrollable)
     st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+
+    # Display chat history
     for chat in st.session_state.chat_history:
         st.markdown(f"<div class='user-message'><strong>🧌 You:</strong><br>{chat['user']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='ai-message'><strong>🧙‍♂️ DocSage:</strong><br>{chat['response']}</div>", unsafe_allow_html=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # GitHub floating link (bottom-right)
+    # Fixed input area at the bottom
+    st.markdown("<div class='fixed-input'>", unsafe_allow_html=True)
+    user_question = st.text_input("Ask me anything about your document:", key="chat_input")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # If user typed something, process
+    if user_question:
+        response = user_input(user_question)  # Replace with your function
+        st.session_state.chat_history.append({
+            "user": user_question,
+            "response": response["output_text"] if response else "No response found."
+        })
+        # Clear the text input after submission 
+        # st.session_state["chat_input"] = ""
+
+    # Optional: GitHub link at bottom-right
     st.markdown(
         """
         <div class="github-link">
