@@ -42,7 +42,7 @@ def get_vector_store(text_chunks):
 def get_conversational_chain():
     prompt_template = """
     You are DocSage, the AI document helper for everyone who is wise enough to choose you. You are here to help people find answers to their questions from the documents they provide.
-    Answer the question as detailed as possible from provided context, make sure to provide all the details. Sound like a wise sage full of wisdom and knowledge, helping a seeker attain knowledge like those medieval sages.
+    Answer the question as detailed as possible from provided context, make sure to provide all the details. Sound like a wise sage full of wisdom and knowledge, helping a seeker attain knowledge like those medieval sages. Try to adapt to the tone of the questions asked by people but not lossing the tone of wise sage. Even though someone is better than you you should sound convincing.
     Context: \n {context}\n
     Question: \n {question}\n
 
@@ -107,9 +107,9 @@ def main():
         }
         /* Chat container that scrolls */
         .chat-container {
-            height: 70vh;
+            height: auto;
             overflow-y: auto;
-            margin-bottom: 120px; /* Leave space for the fixed input area */
+            margin-bottom: 10px; /* Leave space for the fixed input area */
             padding: 1rem;
         }
         /* Fixed input area */
@@ -153,6 +153,10 @@ def main():
             margin-left: 10px;
             margin-top: 10px;
         }
+        .gif-container {
+            display: flex;
+            justify-content: center;
+        }
         /* GitHub link floating button */
         .github-link {
             position: fixed;
@@ -165,6 +169,17 @@ def main():
     )
 
     # Header
+
+    # GIF Animation
+    st.markdown(
+        """
+        <div class='gif-container'>
+            <img src='https://gifdb.com/images/high/pepe-wizard-reading-book-8ek6h8e9aexhecu6.gif' width='100'>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.markdown(
         """
         <h1 style='text-align: center; color: #6c5ce7; margin-top: 1rem;'>
@@ -179,6 +194,13 @@ def main():
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
 
+    
+    # Chat container (scrollable area for messages)
+    st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+    for chat in st.session_state.chat_history:
+        st.markdown(f"<div class='user-message'><strong>🧌 You:</strong><br>{chat['user']}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='ai-message'><strong>🧙‍♂️ DocSage:</strong><br>{chat['response']}</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
     # Fixed input area at the bottom using a form
@@ -195,13 +217,10 @@ def main():
             })
 
             # No need to manually clear the input; clear_on_submit=True handles that.
+            st.rerun() # after latest question is asked re-render the page to show the latest question and answer
+    
 
-        # Chat container (scrollable area for messages)
-    st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
-    for chat in st.session_state.chat_history:
-        st.markdown(f"<div class='user-message'><strong>🧌 You:</strong><br>{chat['user']}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='ai-message'><strong>🧙‍♂️ DocSage:</strong><br>{chat['response']}</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    
 
     # GitHub floating link (bottom-right)
     st.markdown(
