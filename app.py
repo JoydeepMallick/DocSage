@@ -37,7 +37,7 @@ def get_chunks(text): # create overlapping chunks of text which are small in siz
 def get_vector_store(text_chunks):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001") #embedding model basically converts those chunks into mathematical notation 
     vector_store = FAISS.from_texts(text_chunks, embedding = embeddings)
-    vector_store.save_local("faiss_index")
+    vector_store.save_local("./faiss_index")
 
 def get_conversational_chain():
     prompt_template = """
