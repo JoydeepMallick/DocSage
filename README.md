@@ -3,7 +3,9 @@
 DocSage is personalized chatbot to read data from inserted files and then provide answers to your queries.
 
 ### Live Demo Link
- https://docsage.streamlit.app/ 
+- https://docsage.onrender.com/ (🧙‍♂️Works Fine)
+
+- https://docsage.streamlit.app/ (Does not work with error that it cannot find `faiss_index`)
 
 
 [Reference](https://www.youtube.com/watch?v=dXxQ0LR-3Hg)
