@@ -62,12 +62,13 @@ def user_input(user_question):
     embeddings = GoogleGenerativeAIEmbeddings(model = "models/embedding-001")
 
     # confirm if folder was actually created
-    folder_path = "./faiss_index/"
+    folder_path = os.path.abspath("./faiss_index/")
     index_file = os.path.join(folder_path, "index.faiss")
     if not os.path.exists(index_file):
         print(f"FAISS index not found at {index_file}. Check if it was created.")
         return
     
+
     new_db = FAISS.load_local(folder_path="./faiss_index/", embeddings=embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
 
